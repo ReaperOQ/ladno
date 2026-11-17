@@ -20,6 +20,8 @@ T03 использует `cryptography-core` и `cryptography-random` 0.6.0, п�
 
 ## Сборка и проверка
 
+T04: `shared/domain` использует kotlinx.serialization JSON **1.11.0** с compiler plugin **2.4.21**, kotlinx.datetime **0.7.1** и существующий kotlinx.coroutines **1.11.0** для Flow-портов. Версии фиксированы в каталоге. Domain не зависит от Android APIs, Room, Compose или Spring. [Настройка serialization](https://kotlinlang.org/docs/serialization-get-started.html), [строки JsonPrimitive](https://kotlinlang.org/api/kotlinx.serialization/kotlinx-serialization-json/kotlinx.serialization.json/-json-primitive/), [datetime 0.7.1 и kotlin.time.Instant](https://github.com/Kotlin/kotlinx-datetime/releases/tag/v0.7.1). JVM-компиляция с сериализаторами и компиляция общего кода/тестов в Wasm klib проверены Kotlin CLI 2.4.21.
+
 Для первого запуска нужны доступ к сервисам Gradle, Google Maven, Maven Central, Node.js и npm. Gradle загружает инструменты для сборки Wasm автоматически. Для запуска веб-приложения нужен браузер с WasmGC.
 
 ### Windows PowerShell

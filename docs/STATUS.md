@@ -42,4 +42,19 @@
 
 Штатные команды: `gradlew.bat :shared:data:testAndroidHostTest :shared:data:wasmJsBrowserTest :shared:data:androidConnectedCheck`. Для Chrome можно указать `CHROME_BIN`. Windows Gradle остановился на выделении динамического UDP-порта, а Android SDK Windows недоступен Linux Gradle из-за формата Build Tools. Адаптеры пока не подключены к экрану входа, outbox или ротации.
 
-**Далее T04** — доменные сущности и точные суммы.
+## T04 · Общие доменные сущности и точные суммы
+
+Готово. `shared/domain/commonMain` содержит Money, BankProfile, Account, Card, IconAssetRef, Transaction/Split/RefundLink/TransferLink, Category, BudgetMonth, PlannedPayment, ReviewItem и локальные Flow/suspend-порты хранилища. Балансов нет. Тип операции отделён от reviewStatus; income/transfer не расходуют план, refund уменьшает net по собственной дате. Проверяются положительные суммы операций, точная сумма splits, валюты, суммарные/категорийные возвраты и новые назначения card→account. Архивирование сохраняет ссылки и историю. [Решение T04](ADR_T04_DOMAIN.md).
+
+Money использует signed Long minor units, проверяет переполнение и precision, допускает только явное округление. В JSON суммы и revisions/version — canonical decimal strings; числовые JSON значения отклоняются. Поддерживаемые валюты на этом срезе: RUB/USD/EUR (2 знака), JPY (0), KWD (3), без FX. Запись с outbox, сериализация конкурентных возвратов и E2EE заданы контрактом портов; адаптеров persistence в T04 нет.
+
+| Проверка | Результат |
+|---|---|
+| JDK 21.0.3, Kotlin CLI/serialization plugin 2.4.21, JUnit 4.13.2 (`org.junit.runner.JUnitCore app.ladno.domain.MoneyTest app.ladno.domain.EntitiesTest`) | **12 тестов прошли**: Long min/max и overflow, precision, rounding, 2001 арифметический round-trip, JSON > 2^53, splits, одинаковые last4, перепривязка карты, архивирование, статусы, transfer/fee, частичные/избыточные refunds, бюджет/частичная оплата, JSON round-trip сущностей |
+| Kotlin CLI 2.4.21 `K2JSCompiler -Xwasm -Xir-produce-klib-file` | Общие исходники и оба тестовых класса сгенерировали `domain-tests.klib`; это компиляция, не запуск тестов в браузере |
+| `gradlew.bat :shared:domain:testAndroidHostTest :shared:domain:compileTestKotlinWasmJs --offline` | Не дошёл до конфигурации: Windows `FileLockContentionHandler`, `SocketException: No buffer space available ... bind`; выполнены прямые CLI-проверки выше |
+| `git diff --check` | Ошибок whitespace нет |
+
+Штатные команды после устранения системного blocker: `gradlew.bat :shared:domain:testAndroidHostTest :shared:domain:wasmJsBrowserTest`. Android APK и браузерный запуск этого среза не проверены. Calendar/day/week budget engine относится к T15; T04 реализует только сущности и их инварианты.
+
+**Далее T05** — invite/device/session endpoints.

@@ -21,4 +21,8 @@ dependencies {
     implementation(projects.platform.android)
     implementation(libs.activity.compose)
     implementation(libs.compose.runtime)
+    debugImplementation(projects.shared.designsystem)
+    debugImplementation(libs.compose.foundation)
+    debugImplementation(libs.compose.ui)
+    debugImplementation(libs.material3)
 }

@@ -1,0 +1,106 @@
+{
+  "version": 2,
+  "designAuthor": "GPT",
+  "name": "Ладно",
+  "style": [
+    "Material 3 Expressive",
+    "selective neumorphic depth",
+    "human-centered UX"
+  ],
+  "colors": {
+    "light": {
+      "background": "#F5F4F0",
+      "surface": "#FFFFFF",
+      "primary": "#00574F",
+      "onPrimary": "#FFFFFF",
+      "secondaryContainer": "#E6DFF7",
+      "onSecondaryContainer": "#342A48",
+      "onSurface": "#172522",
+      "onSurfaceVariant": "#4F5F59",
+      "outline": "#74827B",
+      "error": "#B3261E"
+    },
+    "dark": {
+      "background": "#121716",
+      "surface": "#1D2422",
+      "primary": "#83D5C6",
+      "onPrimary": "#003A34",
+      "secondaryContainer": "#3C3450",
+      "onSecondaryContainer": "#EAE1FF",
+      "onSurface": "#E4ECE7",
+      "onSurfaceVariant": "#B8C8C0",
+      "outline": "#8A9991",
+      "error": "#FFB4AB"
+    }
+  },
+  "spacingDp": [
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    32,
+    40,
+    48
+  ],
+  "shapeDp": {
+    "small": 12,
+    "control": 16,
+    "card": 24,
+    "hero": 32,
+    "pill": 999
+  },
+  "typographySp": {
+    "hero": 44,
+    "display": 32,
+    "heading": 28,
+    "title": 22,
+    "section": 18,
+    "body": 16,
+    "label": 14,
+    "caption": 12
+  },
+  "layout": {
+    "minTouchTargetDp": 48,
+    "compactPaddingDp": 20,
+    "widePaddingDp": 32,
+    "maxContentWidthDp": 1280,
+    "bottomNavHeightDp": 80,
+    "sidebarWidthDp": 240,
+    "railWidthDp": 80,
+    "breakpointsDp": {
+      "medium": 600,
+      "expanded": 840
+    }
+  },
+  "motionMs": {
+    "pressed": 160,
+    "panel": 240,
+    "emphasis": 320
+  },
+  "shadow": {
+    "heroOnly": true,
+    "offsetDp": 8,
+    "blurDp": 20,
+    "opacity": 0.12,
+    "disableInHighContrast": true
+  },
+  "numberFormat": {
+    "locale": "ru-RU",
+    "currency": "RUB",
+    "tabularFigures": true,
+    "financialMinorUnits": true
+  },
+  "preview": {
+    "date": "2026-11-17",
+    "period": "month",
+    "monthlyLimitMinor": "3200000",
+    "actualMinor": "1800000",
+    "remainingMinor": "1400000",
+    "reserveMinor": "240000",
+    "todayGuideMinor": "82858",
+    "restOfWeekGuideMinor": "497144"
+  },
+  "bankBalances": false
+}

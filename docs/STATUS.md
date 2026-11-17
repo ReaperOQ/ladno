@@ -29,4 +29,17 @@
 | Android 17 (API 37) через ADB | Прошли проверки `text`, `bigText`, `textLines`, обновления, group summary, пустого текста, чужого пакета, отключённого доступа и переподключения. На экране доступа проверены обе темы и шрифт 200%. Результаты и ограничения записаны в [отчёте T02](NOTIFICATION_SPIKE.md) |
 | Контраст проектной палитры | Для пар основного текста, основной кнопки и вторичного контейнера расчёт по WCAG дал минимум 7,43:1 в обеих темах |
 
-**Далее T03** — проверить шифрование Android/JVM ↔ Wasm.
+## T03 · Межплатформенное шифрование
+
+`:shared:data` шифрует payload через AES-256-GCM с HKDF-SHA256, каноническим AAD и envelope v1. Локальные адаптеры заворачивают VaultKey ключом Android Keystore или WebCrypto CryptoKey, сохранённым в IndexedDB. [Формат и решение](ENCRYPTION.md#формат-t03-v1) · [Версии](COMPATIBILITY.md).
+
+| Проверка | Результат |
+|---|---|
+| JDK 21.0.3, Kotlin CLI 2.4.21, JUnit 4.13.2 | 4 теста прошли. Общий набор воспроизводит оба golden envelope побайтно и читает оба. Неверный ключ, тег, контекст и версия отклоняются |
+| Kotlin/Wasm 2.4.21 в Chrome 157.0.8103.79 на localhost | 5 сценариев прошли через временный браузерный runner. Подтверждены оба вектора, негативные проверки, новый nonce и чтение ключа после повторного открытия IndexedDB. Экспорт ключа вернул `InvalidAccessError` |
+| Android 17 (API 37), `adb shell am instrument -w` | 5 сценариев прошли во временном test APK. Подтверждены оба вектора, негативные проверки, новый nonce и расшифровка после повторного открытия Keystore. `SecretKey.encoded` вернул `null` |
+| Gradle 9.3.1, `:shared:data:compileTestKotlinWasmJs` через Ubuntu/WSL | Основные и тестовые исходники Wasm скомпилированы |
+
+Штатные команды: `gradlew.bat :shared:data:testAndroidHostTest :shared:data:wasmJsBrowserTest :shared:data:androidConnectedCheck`. Для Chrome можно указать `CHROME_BIN`. Windows Gradle остановился на выделении динамического UDP-порта, а Android SDK Windows недоступен Linux Gradle из-за формата Build Tools. Адаптеры пока не подключены к экрану входа, outbox или ротации.
+
+**Далее T04** — доменные сущности и точные суммы.

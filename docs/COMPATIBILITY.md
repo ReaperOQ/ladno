@@ -14,7 +14,9 @@
 | Ktor Client | 3.6.1 | Для `wasmJs` опубликован движок `Js` на базе Fetch. [Движки Ktor Client](https://ktor.io/docs/client-engines.html) |
 | cryptography-kotlin | 0.6.0 | Для `wasmJs` предусмотрен WebCrypto provider. Браузерный WebCrypto требует безопасного контекста (HTTPS или localhost). [Релиз библиотеки](https://github.com/whyoleg/cryptography-kotlin/releases/tag/0.6.0), [Web Crypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API) |
 
-Версии плагинов и библиотек фиксирует [каталог](../gradle/libs.versions.toml). Отдельный `compileKotlinWasmJs` с версиями из каталога подтвердил разрешение WebCrypto provider и компиляцию обращений к `HttpClient(Js)` и `CryptographyProvider.Default`. Сетевые запросы и криптографические векторы проверяются при интеграции HTTP и E2EE.
+Версии плагинов и библиотек фиксирует [каталог](../gradle/libs.versions.toml). Отдельный `compileKotlinWasmJs` подтвердил компиляцию обращений к `HttpClient(Js)` и `CryptographyProvider.Default`.
+
+T03 использует `cryptography-core` и `cryptography-random` 0.6.0, провайдеры `cryptography-provider-jdk` и `cryptography-provider-webcrypto` 0.6.0. Локальный wrapping использует Android Keystore (AES key generation через `KeyGenParameterSpec` с API 23) или WebCrypto с `extractable=false` и IndexedDB (версия схемы 1). Для Wasm interop и тестов используется kotlinx.coroutines 1.11.0, для проверок на устройстве — AndroidX Test Runner 1.7.0. [Провайдеры 0.6.0](https://github.com/whyoleg/cryptography-kotlin/tree/0.6.0/cryptography-providers) · [Android Keystore](https://developer.android.com/privacy-and-security/keystore) · [WebCrypto CryptoKey](https://www.w3.org/TR/webcrypto-2/#cryptokey-interface).
 
 ## Сборка и проверка
 

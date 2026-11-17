@@ -30,6 +30,22 @@ Nonce должен быть уникален на ключ. Использова
 
 AAD связывает userId/vaultId, entityId, entityType, schemaVersion, keyVersion. Перенос ciphertext к другому entity/user должен проваливать authentication. ServerRevision назначается после записи и не используется в AAD исходного шифрования. Для pull проверяется монотонность серверной revision; защита от активного server rollback за пределами обычной модели утечки БД требует отдельного протокола и не обещается.
 
+### Формат T03 (v1)
+
+Каждое поле канонической последовательности кодируется как 4 байта длины (big-endian), затем UTF-8 без нормализации. Пустые поля и некорректный UTF-16 отклоняются. Версии схемы и ключа — положительные Int, записанные десятичными ASCII-цифрами без ведущих нулей. Порядок полей фиксирован:
+
+| Назначение | Поля по порядку |
+|---|---|
+| HKDF info | `ladno/payload-key/v1`, vaultId, entityId, keyVersion, purpose |
+| Payload AAD | `ladno/payload-aad/v1`, userId, vaultId, entityId, entityType, schemaVersion, keyVersion, purpose |
+| Local wrap AAD | `ladno/local-wrap/v1`, userId, vaultId, keyVersion |
+
+HKDF-SHA256 использует salt из UTF-8 строки `ladno/hkdf-sha256/v1` и выдаёт 32 байта. Для purpose предусмотрены значения `record` и `asset`. Envelope содержит `01 || nonce[12] || ciphertext || tag[16]`. Для локального wrapping длина envelope ровно 61 байт. Контекст передаётся отдельно и сверяется через GCM; неизвестная версия envelope отклоняется. При интеграции sync отдельные поля JSON кодируются по SYNC_API.
+
+Новые операции получают nonce от CSPRNG. Для локального wrapping Android выдаёт nonce через Keystore, веб — через WebCrypto. Повтор отправки должен читать готовый envelope из outbox. Перед массовой синхронизацией нужно реализовать учёт лимита и ротацию. Верхняя граница для случайных 96-битных nonce — не более 2³² шифрований на ключ суммарно по всем устройствам, включая локальные ключи wrapping. [NIST SP 800-38D, §8.3](https://csrc.nist.gov/pubs/sp/800/38/d/final).
+
+Решение T03: payload использует провайдеры cryptography-kotlin для общих алгоритмов. Локальные wrapping keys остаются внутри Android Keystore или WebCrypto; кроссплатформенное представление применяется только к зашифрованным байтам. Клиент передаёт стабильный локальный alias/key ID. При отсутствии ключа unwrap завершается ошибкой, чтобы клиент мог предложить recovery. Хранилище самого wrapped envelope подключается на этапе интеграции vault.
+
 ## Ключ восстановления и новые устройства
 
 На первом устройстве также создаётся случайный 256-битный RecoverySecret, отображаемый в виде recovery-файла/QR/группированного текста. Он не является кодом приглашения и не отправляется на сервер. Из него HKDF выводит RecoveryWrapKey; VaultKey шифруется этим ключом со своим nonce и AAD. На сервер отправляется только recovery envelope и несекретные параметры.

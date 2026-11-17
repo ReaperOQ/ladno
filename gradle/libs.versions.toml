@@ -12,8 +12,14 @@ spring-boot = "4.1.2"
 ktor = "3.6.1"
 cryptography = "0.6.0"
 coroutines = "1.11.0"
+serialization = "1.11.0"
+datetime = "0.7.1"
+jsjodaCore = "5.7.0"
+jsjodaTimezone = "2.25.2"
 
 [libraries]
+serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime" }
 androidx-test-runner = { module = "androidx.test:runner", version = "1.7.0" }
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
@@ -33,6 +39,7 @@ coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", ve
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 [plugins]
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-multiplatform = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }

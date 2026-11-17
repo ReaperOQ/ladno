@@ -18,11 +18,15 @@
 
 Реализованы debug listener, экран системного доступа **Ладно T02** и отдельный debug APK **Ladno Notifier**. Listener сверяет точный пакет до чтения extras, пропускает group summary и проверяет активные карточки после подключения. Диагностика ограничена фиксированными кодами в Logcat. Прогоны на реальных банковских уведомлениях отсутствуют.
 
+Экран доступа и notifier используют общую палитру Ладно, акцентную типографику Material 3 Expressive и кнопки с изменением формы при нажатии. Общий экран приглашения Android и Wasm использует ту же палитру и акцентную типографику. Текущих версий Compose достаточно.
+
 | Проверка | Результат |
 |---|---|
 | `gradlew.bat --offline :androidApp:assembleDebug :notificationNotifier:assembleDebug :androidApp:assembleRelease -x :androidApp:lintVitalRelease` | Оба debug APK и release APK собраны на Windows, JDK 21. Обычная offline-сборка release остановилась на зависимостях AndroidX Activity 1.8.2 для lint, которых нет в кэше |
 | `aapt dump xmltree` и проверка строк DEX в обоих APK Ладно и APK notifier | Listener, экран доступа и тестовый allowlist присутствуют только в debug APK Ладно. Notifier использует собственный пакет. Разрешения `INTERNET` в обоих debug APK нет |
 | `gradlew.bat --offline :notificationNotifier:tasks --all` | Для notifier зарегистрированы задачи упаковки только debug-варианта |
-| Устройство или эмулятор | **Не выполнено.** `adb devices` вернул пустой список, AVD и готовых образов нет. Проверки `text`, `bigText`, `textLines`, обновления, group summary, чужого пакета, переподключения и отключённого доступа описаны в [ручном сценарии T02](NOTIFICATION_SPIKE.md) |
+| `gradlew.bat --offline :webApp:wasmJsBrowserDistribution` | Wasm дистрибутив с обновлённой общей темой собран |
+| Android 17 (API 37) через ADB | Прошли проверки `text`, `bigText`, `textLines`, обновления, group summary, пустого текста, чужого пакета, отключённого доступа и переподключения. На экране доступа проверены обе темы и шрифт 200%. Результаты и ограничения записаны в [отчёте T02](NOTIFICATION_SPIKE.md) |
+| Контраст проектной палитры | Для пар основного текста, основной кнопки и вторичного контейнера расчёт по WCAG дал минимум 7,43:1 в обеих темах |
 
-**Далее T03** — проверить шифрование Android/JVM ↔ Wasm. Ручной прогон T02 остаётся открытым.
+**Далее T03** — проверить шифрование Android/JVM ↔ Wasm.

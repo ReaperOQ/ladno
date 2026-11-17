@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -17,4 +18,12 @@ android {
 
 androidComponents {
     beforeVariants { it.enable = it.buildType == "debug" }
+}
+
+dependencies {
+    debugImplementation(projects.shared.designsystem)
+    debugImplementation(libs.activity.compose)
+    debugImplementation(libs.compose.foundation)
+    debugImplementation(libs.compose.runtime)
+    debugImplementation(libs.compose.ui)
 }

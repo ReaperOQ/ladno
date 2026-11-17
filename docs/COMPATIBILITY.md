@@ -58,9 +58,19 @@ sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
 | Задача | Артефакт |
 |---|---|
 | `:androidApp:assembleDebug` | `androidApp/build/outputs/apk/debug/androidApp-debug.apk` |
+| `:notificationNotifier:assembleDebug` | `notificationNotifier/build/outputs/apk/debug/notificationNotifier-debug.apk` |
 | `:webApp:wasmJsBrowserDistribution` | `webApp/build/dist/wasmJs/productionExecutable/` |
 | `:server:build` | `server/build/libs/ladno-server.jar` (задача `:server:bootJar`) |
 
 На подключённом устройстве или эмуляторе установите APK через `adb install -r androidApp/build/outputs/apk/debug/androidApp-debug.apk`. Раздайте production distribution по HTTP командой `python -m http.server 8000 --directory webApp/build/dist/wasmJs/productionExecutable` (на Ubuntu `python3`) и откройте `http://localhost:8000/`.
 
 Ожидаемый ответ `GET /health` — HTTP 200 и JSON `{"status":"UP"}`. Запуск через Gradle доступен задачей `:server:bootRun`. Выполненные проверки перечислены в [статусе](STATUS.md).
+
+### Android API для T02
+
+| API | Доступность |
+|---|---|
+| `NotificationListenerService`, `onListenerConnected` и `getActiveNotifications()` | API 18, callback подключения с API 21. [Listener API](https://developer.android.com/reference/android/service/notification/NotificationListenerService) |
+| `EXTRA_TEXT`, `EXTRA_BIG_TEXT`, `EXTRA_TEXT_LINES` и `FLAG_GROUP_SUMMARY` | Поля с API 19, флаг с API 20. [Notification API](https://developer.android.com/reference/android/app/Notification) |
+| Экран выдачи доступа и проверка разрешения | `ACTION_NOTIFICATION_LISTENER_SETTINGS` с API 22, `isNotificationListenerAccessGranted` с API 27. На API 24–26 используется проверка пакета через `NotificationManagerCompat` для единственного listener в APK. В debug APK разрешилась транзитивная AndroidX Core 1.16.0. [Settings](https://developer.android.com/reference/android/provider/Settings#ACTION_NOTIFICATION_LISTENER_SETTINGS) · [NotificationManager](https://developer.android.com/reference/android/app/NotificationManager#isNotificationListenerAccessGranted(android.content.ComponentName)) · [AndroidX Core](https://developer.android.com/reference/androidx/core/app/NotificationManagerCompat#getEnabledListenerPackages(android.content.Context)) |
+| Канал и разрешение на отправку из notifier | Канал с API 26, `POST_NOTIFICATIONS` с API 33. [Каналы](https://developer.android.com/reference/android/app/NotificationChannel) · [Разрешение отправки](https://developer.android.com/develop/ui/compose/notifications/notification-permission) |

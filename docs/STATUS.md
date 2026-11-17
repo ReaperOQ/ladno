@@ -14,4 +14,15 @@
 
 На Ubuntu полный набор задач не запускался. Android APK не запускался на устройстве или эмуляторе, список `adb devices` был пуст. Webpack предупреждает о размере JS и Wasm (около 10,5 МиБ суммарно до HTTP-сжатия).
 
-**Далее T02** — Android NotificationListenerService и проверка синтетического уведомления с точным allowlist пакетов.
+## T02 · Android NotificationListenerService
+
+Реализованы debug listener, экран системного доступа **Ладно T02** и отдельный debug APK **Ladno Notifier**. Listener сверяет точный пакет до чтения extras, пропускает group summary и проверяет активные карточки после подключения. Диагностика ограничена фиксированными кодами в Logcat. Прогоны на реальных банковских уведомлениях отсутствуют.
+
+| Проверка | Результат |
+|---|---|
+| `gradlew.bat --offline :androidApp:assembleDebug :notificationNotifier:assembleDebug :androidApp:assembleRelease -x :androidApp:lintVitalRelease` | Оба debug APK и release APK собраны на Windows, JDK 21. Обычная offline-сборка release остановилась на зависимостях AndroidX Activity 1.8.2 для lint, которых нет в кэше |
+| `aapt dump xmltree` и проверка строк DEX в обоих APK Ладно и APK notifier | Listener, экран доступа и тестовый allowlist присутствуют только в debug APK Ладно. Notifier использует собственный пакет. Разрешения `INTERNET` в обоих debug APK нет |
+| `gradlew.bat --offline :notificationNotifier:tasks --all` | Для notifier зарегистрированы задачи упаковки только debug-варианта |
+| Устройство или эмулятор | **Не выполнено.** `adb devices` вернул пустой список, AVD и готовых образов нет. Проверки `text`, `bigText`, `textLines`, обновления, group summary, чужого пакета, переподключения и отключённого доступа описаны в [ручном сценарии T02](NOTIFICATION_SPIKE.md) |
+
+**Далее T03** — проверить шифрование Android/JVM ↔ Wasm. Ручной прогон T02 остаётся открытым.

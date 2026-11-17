@@ -2,6 +2,8 @@ package app.ladno.domain
 
 import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,6 +27,19 @@ class EntitiesTest {
         kind = TransactionKind.REFUND, amount = rub(amount),
         refund = RefundLink(id(4), rub(amount)), splits = listOf(TransactionSplit(id(2), rub(amount))),
     )
+
+    @Test fun ianaZonesAreLoadedAndRespectDstAndFractionalOffsets() {
+        for (zoneId in listOf("Europe/Moscow", "Europe/Berlin", "America/New_York", "Asia/Kathmandu", "Pacific/Chatham")) {
+            assertEquals(zoneId, expense().copy(zoneAtAssignment = zoneId).zoneAtAssignment)
+        }
+        val berlin = TimeZone.of("Europe/Berlin")
+        assertEquals(1, Instant.parse("2026-03-29T00:30:00Z").toLocalDateTime(berlin).hour)
+        assertEquals(3, Instant.parse("2026-03-29T01:30:00Z").toLocalDateTime(berlin).hour)
+        val kathmandu = now.toLocalDateTime(TimeZone.of("Asia/Kathmandu"))
+        assertEquals(15, kathmandu.hour)
+        assertEquals(45, kathmandu.minute)
+        assertFailsWith<IllegalArgumentException> { expense().copy(zoneAtAssignment = "Invalid/TimeZone") }
+    }
 
     @Test fun splitSumCurrencyPositivityAndOverflow() {
         val split = expense().copy(splits = listOf(TransactionSplit(id(2), rub(40)), TransactionSplit(id(5), rub(60))))

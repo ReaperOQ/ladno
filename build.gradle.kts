@@ -9,3 +9,9 @@ plugins {
     alias(libs.plugins.compose) apply false
     alias(libs.plugins.spring.boot) apply false
 }
+
+plugins.withType<org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin> {
+    // datetime 0.7.1 requests core 3.2.0; timezone must share one core >= 5.7.0.
+    the<org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootExtension>()
+        .resolution("@js-joda/core", libs.versions.jsjodaCore.get())
+}

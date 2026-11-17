@@ -14,6 +14,8 @@ cryptography = "0.6.0"
 coroutines = "1.11.0"
 serialization = "1.11.0"
 datetime = "0.7.1"
+jsjodaCore = "5.7.0"
+jsjodaTimezone = "2.25.2"
 
 [libraries]
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }

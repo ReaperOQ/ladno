@@ -105,7 +105,12 @@ data class ReviewItem(
     init { require(resolution !in setOf(ReviewResolution.CONFIRMED, ReviewResolution.LINKED) || linkedTransactionId != null) }
 }
 
-internal fun validateZone(zoneId: String) { TimeZone.of(zoneId) }
+internal fun validateZone(zoneId: String) {
+    initializeTimeZones()
+    TimeZone.of(zoneId)
+}
+
+internal expect fun initializeTimeZones()
 
 @Serializable
 enum class RolloverPolicy { NONE, EXPLICIT }
